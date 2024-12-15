@@ -1,69 +1,83 @@
-# Define basic grammar rules
-def check_subject_verb_agreement(sentence):
-    """
-    - Singular subjects use singular verbs
-    - Plural subjects use plural verbs
-    """
-    errors = []
-    singular_subjects = ["அவன்", "அவள்", "அது"]  
-    singular_verbs = ["செல்லும்", "படிக்கும்", "காணும்"] 
-    plural_subjects = ["அவர்கள்", "நாங்கள்", "அவை"] 
-    plural_verbs = ["செல்கிறார்கள்", "படிக்கிறார்கள்", "காண்கிறார்கள்"]  
-    words = sentence.split()
-    if len(words) >= 2:
-        subject, verb = words[0], words[-1]  # Check subject and the last word as verb
-        if subject in singular_subjects and verb not in singular_verbs:
-            errors.append(f"Subject-verb agreement error: '{subject}' should match a singular verb.")
-        elif subject in plural_subjects and verb not in plural_verbs:
-            errors.append(f"Subject-verb agreement error: '{subject}' should match a plural verb.")
-    return errors
+import json
 
+def load_rules_from_file(file_path):
+    """Loads rules from a JSON file."""
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return json.load(file)
 
-def check_word_order(sentence):
-    """
-    Checks basic word order in Tamil.
-    Tamil follows SOV (Subject-Object-Verb) structure.
-    """
-    errors = []
-    words = sentence.split()
-    tamil_verbs = ["செல்லும்", "படிக்கும்", "காணும்", "வாசிக்கிறேன்"]  # Common Tamil verbs
+def tokenize_sentence(sentence):
+    """Splits the sentence into words."""
+    return sentence.split()
 
-    # Ensure at least Subject-Verb or Subject-Object-Verb structure exists
-    if len(words) >= 2:
-        # The last word should be a verb
-        if words[-1] not in tamil_verbs:
-            errors.append(f"Word order error: The last word '{words[-1]}' is not a valid verb in SOV structure.")
-        # If 3 or more words, ensure middle words are not verbs
-        if len(words) >= 3:
-            for obj in words[1:-1]:
-                if obj in tamil_verbs:
-                    errors.append(f"Word order error: Word '{obj}' should not be a verb in SOV structure.")
+def check_subject_verb_agreement(sentence, subject_verb_rules):
+    """
+    Rule: Check if the subject agrees with the verb.
+    Example:
+    'அவள் வந்தான்' -> Incorrect, should be 'அவள் வந்தாள்'
+    'அவள் வந்தாள்' -> Correct
+    """
+    tokens = tokenize_sentence(sentence)
+    if len(tokens) > 1 and tokens[0] in subject_verb_rules:
+        expected_verb = subject_verb_rules[tokens[0]]
+        if tokens[1] != expected_verb:
+            corrected_sentence = sentence.replace(tokens[1], expected_verb)
+            return f"Incorrect: '{sentence}' -> Corrected: '{corrected_sentence}'"
+    return None
+
+def check_tense_agreement(sentence, tense_rules):
+    """
+    Rule: Check if the verb agrees with the tense (past, present, future).
+    Example:
+    'அவள் வந்து இருக்கின்றாள்' -> Correct (Present continuous)
+    'அவள் வந்தாள்' -> Correct (Past)
+    'அவள் வருவாள்' -> Correct (Future)
+    """
+    tokens = tokenize_sentence(sentence)
+    
+    if len(tokens) > 1 and tokens[0] in tense_rules:
+        # Check for tense agreement
+        subject = tokens[0]
+        verb = tokens[1]
+        
+        # Check for tense in the verb
+        if verb in tense_rules[subject]["past"]:
+            expected_tense = "past"
+        elif verb in tense_rules[subject]["present"]:
+            expected_tense = "present"
+        elif verb in tense_rules[subject]["future"]:
+            expected_tense = "future"
+        else:
+            return f"Error: '{verb}' is not a valid verb form for {subject}."
+        
+        expected_verb = tense_rules[subject][expected_tense]
+        if verb != expected_verb:
+            corrected_sentence = sentence.replace(verb, expected_verb)
+            return f"Incorrect: '{sentence}' -> Corrected: '{corrected_sentence}'"
+    return None
+
+def grammar_corrector(sentence, subject_verb_rules, tense_rules):
+    """Check for both subject-verb agreement and tense-based agreement errors."""
+    subject_verb_error = check_subject_verb_agreement(sentence, subject_verb_rules)
+    tense_error = check_tense_agreement(sentence, tense_rules)
+    
+    if subject_verb_error:
+        return subject_verb_error
+    elif tense_error:
+        return tense_error
     else:
-        errors.append("Word order error: Incomplete sentence structure.")
+        return f"Correct sentence: '{sentence}'"
 
-    return errors
+# Load the rules from JSON files
+subject_verb_rules = load_rules_from_file('subject_verb_rules.json')
+tense_rules = load_rules_from_file('tense_rules.json')
 
+# Test examples
+sentence1 = 'அவள் வந்தான்'  # Incorrect: subject-verb mismatch
+sentence2 = 'அவள் வந்தாள்'  # Correct
+sentence3 = 'அவன் வந்து இருக்கின்றான்'  # Correct (Present continuous)
+sentence4 = 'அவன் வருவான்'  # Correct (Future)
 
-def tamil_grammar_checker(sentence):
-    """
-    Combines different rule-based checks for Tamil grammar.
-    """
-    errors = []
-    errors.extend(check_subject_verb_agreement(sentence))
-    errors.extend(check_word_order(sentence))
-
-    if not errors:
-        return "No grammatical errors found."
-    else:
-        return "\n".join(errors)
-
-
-if __name__ == "__main__":
-    # Input Tamil sentences
-    sentence1 = "அவன் செல்லுகிறார்கள்"  
-    sentence2 = "செல்லும் அவன்"  
-    sentence3 = "அவன் செல்லும்"  
-
-    print("Sentence 1:", tamil_grammar_checker(sentence1))
-    print("Sentence 2:", tamil_grammar_checker(sentence2))
-    print("Sentence 3:", tamil_grammar_checker(sentence3))
+print(grammar_corrector(sentence1, subject_verb_rules, tense_rules))
+print(grammar_corrector(sentence2, subject_verb_rules, tense_rules))
+print(grammar_corrector(sentence3, subject_verb_rules, tense_rules))
+print(grammar_corrector(sentence4, subject_verb_rules, tense_rules))
