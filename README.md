@@ -27,13 +27,49 @@ This project is a Tamil grammar correction tool that implements multiple methods
 The rule-based method uses predefined linguistic rules to detect and correct grammatical errors in Tamil sentences. This approach works by identifying patterns in the sentence structure and applying the correct rule for error correction.
 
 ### 2. Deep Learning Method: Seq2Seq Model
-This method uses an Encoder-Decoder architecture based on LSTM (Long Short-Term Memory) for sequence-to-sequence learning. The Seq2Seq model learns to map input sentences with grammatical errors to corrected output sentences, focusing on gender and tense-based verb errors.
+# Seq2Seq Model for Ungrammatical to Standard Tamil Sentence Translation
 
-- **Encoder**: Processes the input sentence and encodes it into a fixed-size context vector.
-- **Decoder**: Generates the corrected output sentence from the context vector.
+This project implements a **Sequence-to-Sequence (Seq2Seq)** model using LSTM layers to translate ungrammatical Tamil sentences into their standard Tamil counterparts. The model leverages the TensorFlow library for training and evaluation.
+
+## Project Overview
+
+This project demonstrates a machine translation approach where the goal is to convert ungrammatical Tamil sentences into grammatically correct standard Tamil sentences. The architecture uses a **Seq2Seq model** with LSTM layers for both encoding and decoding sequences.
+
+## Architecture
+
+### Encoder:
+- The encoder takes ungrammatical sentences as input.
+- It consists of an **Embedding layer** to map words to dense vectors, followed by an **LSTM layer** that processes the input and returns the final hidden and cell states.
+
+### Decoder:
+- The decoder generates standard Tamil sentences as output.
+- It uses an **Embedding layer** and an **LSTM layer** to predict the next word in the output sequence based on the encoder's final states.
+- A **Dense layer** with softmax activation is used to predict the output word at each time step.
+
+### Inference:
+- During inference, a separate encoder and decoder model are used to generate translations.
+- The encoder produces initial states, and the decoder generates one word at a time, using the previous word's prediction as the next input.
+
+### Training:
+- The model is trained using categorical crossentropy loss and the Adam optimizer.
+- The training process is visualized using training and validation accuracy and loss plots.
+
+### Evaluation:
+- The model's performance is evaluated using BLEU scores, a standard metric for machine translation.
+
+## Requirements
+
+To run the code, the following libraries are required:
+
+- **TensorFlow**: For building and training the Seq2Seq model.
+- **Pandas**: For data handling and preprocessing.
+- **NumPy**: For numerical operations.
+- **Scikit-learn**: For data splitting and processing.
+- **Matplotlib**: For plotting training/validation metrics.
+- **NLTK**: For calculating BLEU scores.
 
 ### 3. Machine Learning / NLP Method
-This method utilizes machine learning techniques and natural language processing (NLP) to detect and correct grammar errors. It uses feature extraction, such as syntactic and semantic features, to classify and correct gender and tense errors.
+
 
 ## Types of Grammar Errors Detected
 
