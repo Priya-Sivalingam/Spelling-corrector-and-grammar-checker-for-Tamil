@@ -49,8 +49,8 @@ def main():
     """
     Main function to load the dataset, extract words, and save them to a file.
     """
-    dataset_path = "../data/Tamil _wiki-data.csv"  # Corrected file name
-    output_file = "../data/processed_words.txt"
+    dataset_path = "../Dataset/Tamil_wiki-data.csv"  # Corrected file name
+    output_file = "../Dataset/processed_words.txt"
 
     print("Loading dataset...")
     try:
