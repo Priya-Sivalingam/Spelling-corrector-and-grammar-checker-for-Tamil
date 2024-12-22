@@ -1,9 +1,6 @@
-# spell_checker.py
-
 import re
 from collections import Counter
 from typing import List
-from itertools import product
 
 # Levenshtein distance function
 def lev(word1, word2):
@@ -54,7 +51,7 @@ def prefilter_candidates(user_input, correct_words, length_threshold=2):
         if abs(len(word) - len(user_input)) <= length_threshold
     ]
 
-# Modified suggestions function to return top N candidates
+# Suggestions function
 def suggestions(user_input, correct_words, top_n=5):
     candidates = []
     filtered_correct_words = prefilter_candidates(user_input, correct_words)
@@ -71,45 +68,36 @@ def suggestions(user_input, correct_words, top_n=5):
 
         # Combined score
         score = w_lev * lev_score - w_prefix * prefix_score - w_suffix * suffix_score
-
         candidates.append((word, score))
 
-    # Sort by combined score (lower is better)
     candidates = sorted(candidates, key=lambda x: x[1])
     return [candidate[0] for candidate in candidates[:top_n]] if candidates else [user_input]
 
+from Levenshtein import distance as lev  # Import Levenshtein distance function
 
 class SpellChecker:
-    def __init__(self, correct_words_file, user_input):
-        self.user_input_words = user_input.split()  # Split user input into words
-        self.correct_words = self.load_dictionary(correct_words_file)  # Load the dictionary
+    def __init__(self, correct_words):
+        self.correct_words = correct_words  # Load correct words as a list directly
 
-    def load_dictionary(self, correct_words_file):
-        """Load dictionary from file."""
-        try:
-            with open(correct_words_file, 'r', encoding='utf-8') as file:
-                return [word.strip() for word in file.readlines()]  # List of words in the dictionary
-        except FileNotFoundError:
-            return []
-
-    def correct(self):
+    def suggestions(self, word):
         """
-        Correct the user input by checking for unseen words and generating suggestions.
+        This method generates a list of suggestions for the given word based on the Levenshtein distance.
         """
-        corrected_results = {}
-        for word in self.user_input_words:
-            # Handle unseen word
-            if word not in self.correct_words:
-                # Generate suggestions for unseen word
-                top_suggestions = suggestions(word, self.correct_words, top_n=5)
-                corrected_results[word] = top_suggestions
-                print(f"'{word}' -> Suggestions: {', '.join(top_suggestions)}")
-            else:
-                corrected_results[word] = [word]  # Word is correct
-        return corrected_results
+        # Calculate the Levenshtein distance between the input word and the correct words
+        suggested_words = sorted(self.correct_words, key=lambda w: lev(word, w))
+        return suggested_words[:5]  # Return top 5 closest matches
 
-    def add_to_dictionary(self, new_words: List[str]):
-        """Add unseen words to the dictionary."""
-        self.correct_words.extend(new_words)
-        self.correct_words = list(set(self.correct_words))  # Remove duplicates if any
+    def correct(self, sentence):
+        """
+        This method processes the user input and corrects the words using the closest match from the correct words.
+        """
+        corrected_words = []
+        for word_to_check in sentence.split():  # Split sentence into words
+            # Get the top suggestions for the word
+            suggested_words = self.suggestions(word_to_check)
 
+            # Select the word with the lowest Levenshtein distance as the best match
+            best_match = suggested_words[0]
+            corrected_words.append(best_match)
+
+        return " ".join(corrected_words)  # Return the corrected sentence
