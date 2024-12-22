@@ -15,6 +15,18 @@ Tamil is a widely spoken language, and ensuring text quality in Tamil on digital
   - Researched and evaluated AI approaches for grammar correction.
 
 ---
+# Tamil Spell Checker
+
+This project implements a **spell checker** for Tamil text using Levenshtein distance and prefix/suffix matching. The spell checker suggests the closest matches for a given word based on a dictionary of correct words. The goal is to correct spelling errors in Tamil sentences by comparing the input against a predefined list of correct words.
+
+## Features
+
+- **Levenshtein Distance:** Calculates the similarity between two words based on the number of single-character edits required to change one word into the other (insertions, deletions, or substitutions).
+- **Prefix and Suffix Matching:** Scores words based on the similarity of their prefixes and suffixes.
+- **Suggestions:** Provides the top N suggestions for each word based on the combined score from the Levenshtein distance and matching prefixes/suffixes.
+- **File-based Word List:** The spell checker uses a list of correctly spelled words, loaded from a file.
+- **Evaluation:** The performance of the spell checker is evaluated against expected output sentences.
+
 
 # Tamil Grammar Corrector
 
