@@ -7,13 +7,17 @@ Tamil is a widely spoken language, and ensuring text quality in Tamil on digital
 2. **Grammar checking** 🧑‍🏫: Detecting and correcting two types of grammatical errors (e.g., subject-verb agreement, contextual misuse).  
 
 ## Collaborators  
-- **[member name]** 👨‍💻  
-  - Developed the spelling correction module.  
-  - Conducted testing, integration, and accuracy evaluations.  
-- **[member name]** 👩‍💻  
-  - Designed the grammar checking module.  
-  - Researched and evaluated AI approaches for grammar correction.
 
+- **[Darshika Premaranjan-2020E117](https://github.com/darship19)** 👩‍💻  
+  - Designed the grammar checking module.
+  - Researched and implemented **Rule-Based** and **Deep Learning** approaches for grammar correction.
+  - Conducted testing, integration, and accuracy evaluations.
+
+- **[Priyatharsini Sivalingam-2020E122](https://github.com/Priya-Sivalingam)** 👨‍💻  
+  - Developed the spelling correction module.  
+  - Conducted testing, integration, and accuracy evaluations.
+  - Researched and implemented **Machine Learning** approaches for grammar correction.  
+ 
 ---
 # Tamil Spell Checker
 
