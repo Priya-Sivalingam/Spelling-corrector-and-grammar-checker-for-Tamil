@@ -26,7 +26,29 @@ This project implements a **spell checker** for Tamil text using Levenshtein dis
 - **Suggestions:** Provides the top N suggestions for each word based on the combined score from the Levenshtein distance and matching prefixes/suffixes.
 - **File-based Word List:** The spell checker uses a list of correctly spelled words, loaded from a file.
 - **Evaluation:** The performance of the spell checker is evaluated against expected output sentences.
+  
+## Spell Checker Evaluation
 
+The `evaluate_spell_checker` function evaluates a spell checker's performance by comparing its corrected output with the expected version of a text. It calculates key metrics such as **Accuracy**, **Precision**, **Recall**, and **F1-Score**.
+
+### Inputs
+1. `test_words`: Original words from the input text (may contain errors).
+2. `expected_words`: The correct version of the words.
+3. `corrected_text`: The spell checker’s output as a string.
+
+### How It Works
+- Compares the corrected words with both the original and expected words.
+- Counts:
+  - **True Positives (TP)**: Correct fixes.
+  - **False Positives (FP)**: Incorrect fixes.
+  - **False Negatives (FN)**: Missed corrections.
+  - **True Negatives (TN)**: Correctly untouched words.
+
+### Metrics
+1. **Accuracy**: Proportion of words correctly handled.
+2. **Precision**: Percentage of fixes that were correct.
+3. **Recall**: Percentage of errors correctly fixed.
+4. **F1-Score**: Balance between precision and recall.
 
 # Tamil Grammar Corrector
 
