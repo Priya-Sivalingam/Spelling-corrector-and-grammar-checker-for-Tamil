@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spell Checker</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Spell Checker</h1>
+        <form method="POST">
+            <textarea name="sentence" rows="4" placeholder="Enter your sentence here..." required></textarea>
+            <button type="submit">Check Spelling</button>
+        </form>
+
+        {% if corrected_sentence %}
+        <div class="results">
+            <h2>Corrected Sentence:</h2>
+            <p>{{ corrected_sentence }}</p>
+        </div>
+        {% endif %}
+
+        {% if suggestions %}
+        <div class="suggestions">
+            <h2>Suggestions:</h2>
+            <ul>
+                {% for word, suggestions in suggestions.items() %}
+                <li>
+                    <strong>{{ word }}:</strong> {{ suggestions | join(", ") }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
