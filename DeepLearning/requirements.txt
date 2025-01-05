@@ -1,0 +1,7 @@
+tensorflow==2.13.0  # Adjust version based on what you're using
+numpy==1.24.0
+pandas==1.5.3
+scikit-learn==1.2.0
+matplotlib==3.6.2
+nltk==3.8.1
+streamlit==1.22.0
