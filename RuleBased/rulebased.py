@@ -1,19 +1,25 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
 import json
 from nltk.translate.bleu_score import sentence_bleu
 
+
+# Load the rules from JSON files
 def load_rules_from_file(file_path):
-    """Loads rules from a JSON file."""
     with open(file_path, 'r', encoding='utf-8') as file:
         return json.load(file)
 
+
+subject_verb_rules = load_rules_from_file("subject_verb_rules.json")
+tense_rules = load_rules_from_file("File_tense_rules.json")
+
+
+# Grammar Corrector Functions
 def tokenize_sentence(sentence):
-    """Splits the sentence into words."""
     return sentence.split()
 
+
 def check_subject_verb_agreement(sentence, subject_verb_rules):
-    """
-    Rule: Check if the subject agrees with the verb.
-    """
     tokens = tokenize_sentence(sentence)
     if len(tokens) > 1 and tokens[0] in subject_verb_rules:
         expected_verb = subject_verb_rules[tokens[0]]
@@ -22,85 +28,78 @@ def check_subject_verb_agreement(sentence, subject_verb_rules):
             return corrected_sentence
     return sentence
 
+
 def check_tense_agreement(sentence, tense_rules):
-    """
-    Rule: Check if the verb agrees with the tense.
-    """
     tokens = tokenize_sentence(sentence)
     if len(tokens) > 1 and tokens[0] in tense_rules:
         subject = tokens[0]
         verb = tokens[1]
 
-        # Check tense in the verb
         for tense, correct_verb in tense_rules[subject].items():
             if verb == correct_verb:
                 return sentence  # Already correct
-        
-        # Correct the verb if it doesn't match any tense
+
         expected_verb = tense_rules[subject]["past"]  # Default to past for correction
         corrected_sentence = sentence.replace(verb, expected_verb)
         return corrected_sentence
     return sentence
 
+
 def grammar_corrector(sentence, subject_verb_rules, tense_rules):
-    """Check for both subject-verb agreement and tense-based agreement errors."""
     corrected_sentence = check_subject_verb_agreement(sentence, subject_verb_rules)
     corrected_sentence = check_tense_agreement(corrected_sentence, tense_rules)
     return corrected_sentence
 
+
 def calculate_char_bleu_score(predicted_sentence, reference_sentence):
-    """
-    Calculate BLEU score at the character level.
-    Tokenizes sentences into characters instead of words.
-    """
-    reference = [list(reference_sentence)]  # Reference as list of characters
-    predicted = list(predicted_sentence)    # Predicted as list of characters
+    reference = [list(reference_sentence)]
+    predicted = list(predicted_sentence)
     return sentence_bleu(reference, predicted)
 
-def evaluate_sentences(test_sentences, reference_sentences, subject_verb_rules, tense_rules):
-    """
-    Evaluate each test sentence, calculate character-level BLEU, and compute average BLEU.
-    """
-    total_bleu_score = 0.0
-    scores = []
+
+# GUI Implementation
+def process_input():
+    input_sentence = input_entry.get()
+
+    if not input_sentence:
+        messagebox.showerror("Error", "Please enter an input sentence.")
+        return
+
+    # Correct the sentence
+    corrected_sentence = grammar_corrector(input_sentence, subject_verb_rules, tense_rules)
     
-    for i, test_sentence in enumerate(test_sentences):
-        predicted_sentence = grammar_corrector(test_sentence, subject_verb_rules, tense_rules)
-        reference_sentence = reference_sentences[i]
-        
-        bleu_score = calculate_char_bleu_score(predicted_sentence, reference_sentence)
-        scores.append(bleu_score)
-        total_bleu_score += bleu_score
-        
-        print(f"Test Sentence {i + 1}: {test_sentence}")
-        print(f"Predicted: {predicted_sentence}")
-        print(f"Reference: {reference_sentence}")
-        print(f"Character-Level BLEU Score: {bleu_score:.4f}\n")
-    
-    average_bleu_score = total_bleu_score / len(test_sentences)
-    print(f"Average Character-Level BLEU Score: {average_bleu_score:.4f}")
-    return scores, average_bleu_score
+    # Calculate BLEU score comparing input to corrected sentence
+    bleu_score = calculate_char_bleu_score(corrected_sentence, input_sentence)
 
-# Load the rules from JSON files
-subject_verb_rules = load_rules_from_file("RuleBased\subject_verb_rules.json")
-tense_rules = load_rules_from_file("RuleBased\File_tense_rules.json")
+    # Display the results
+    corrected_output.set(corrected_sentence)
+    bleu_output.set(f"{bleu_score:.4f}")
 
-# Test Sentences and References
-test_sentences = [
-    'அவள் வந்தான்',    # Incorrect
-    'அவள் வந்தாள்',    # Correct
-    'அவன் வந்து இருக்கின்றான்',  # Correct
-    'அவன் வருவான்',    # Correct
-    'நான் வந்து இருக்கின்றேன்'  # Correct
-]
 
-reference_sentences = [
-    'அவள் வந்தாள்',
-    'அவள் வந்தாள்',
-    'அவன் வந்து இருக்கின்றான்',
-    'அவன் வருவான்',
-    'நான் வந்து இருக்கின்றேன்'
-]
+# Create the Tkinter Window
+root = tk.Tk()
+root.title("Tamil Grammar Corrector")
+root.geometry("500x250")
 
-# Evaluate
-evaluate_sentences(test_sentences, reference_sentences, subject_verb_rules, tense_rules)
+# Input Section
+ttk.Label(root, text="Input Sentence:").pack(pady=5)
+input_entry = ttk.Entry(root, width=50)
+input_entry.pack()
+
+# Process Button
+process_button = ttk.Button(root, text="Correct Sentence", command=process_input)
+process_button.pack(pady=10)
+
+# Output Section
+ttk.Label(root, text="Corrected Sentence:").pack(pady=5)
+corrected_output = tk.StringVar()
+corrected_label = ttk.Label(root, textvariable=corrected_output, foreground="green")
+corrected_label.pack()
+
+ttk.Label(root, text="Character-Level BLEU Score:").pack(pady=5)
+bleu_output = tk.StringVar()
+bleu_label = ttk.Label(root, textvariable=bleu_output, foreground="blue")
+bleu_label.pack()
+
+# Run the GUI Loop
+root.mainloop()
