@@ -6,13 +6,13 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pickle
 
 # Load the trained models and tokenizers
-encoder_model = tf.keras.models.load_model('D:/07_Semester/AI/project/Spelling-corrector-and-grammar-checker-for-Tamil/DeepLearning/encoder_model.h5')
-decoder_model = tf.keras.models.load_model('D:/07_Semester/AI/project/Spelling-corrector-and-grammar-checker-for-Tamil/DeepLearning/decoder_model.h5')
+encoder_model = tf.keras.models.load_model('model/encoder_model.h5')
+decoder_model = tf.keras.models.load_model('model/decoder_model.h5')
 
-with open('D:/07_Semester/AI/project/Spelling-corrector-and-grammar-checker-for-Tamil/DeepLearning/input_tokenizer.pkl', 'rb') as f:
+with open('model/input_tokenizer.pkl', 'rb') as f:
     input_tokenizer = pickle.load(f)
 
-with open('D:/07_Semester/AI/project/Spelling-corrector-and-grammar-checker-for-Tamil/DeepLearning/output_tokenizer.pkl', 'rb') as f:
+with open('model/output_tokenizer.pkl', 'rb') as f:
     output_tokenizer = pickle.load(f)
 
 # Define constants
