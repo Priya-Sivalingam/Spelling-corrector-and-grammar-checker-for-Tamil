@@ -3,21 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Spell Checker</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
         <h1>Spell Checker</h1>
-        <form method="POST">
+
+        <!-- Instructions Section -->
+        <div class="instructions">
+            <p>Welcome to the Spell Checker! Simply type or paste a sentence in the box below and click "Check Spelling" to receive spelling corrections for any misspelled words.</p>
+        </div>
+
+        <form method="POST" class="spell-check-form">
             <textarea name="sentence" rows="4" placeholder="Enter your sentence here..." required>{{ user_input }}</textarea>
-            <button type="submit">Check Spelling</button>
+            <button type="submit" class="btn">Check Spelling</button>
         </form>
 
         {% if corrected_sentence %}
         <div class="results">
             <h2>Corrected Sentence:</h2>
-            <p>{{ corrected_sentence }}</p>
+            <p>{{ corrected_sentence | safe }}</p> <!-- Mark the sentence as safe to allow HTML rendering -->
         </div>
         {% endif %}
 
