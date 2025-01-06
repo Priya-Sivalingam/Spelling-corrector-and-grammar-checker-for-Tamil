@@ -16,6 +16,7 @@ spell_checker = SpellChecker(correct_words)
 def home():
     corrected_sentence = ""
     suggestions_list = []
+    user_input = ""
 
     if request.method == "POST":
         user_input = request.form.get("sentence")
@@ -26,7 +27,7 @@ def home():
             for word in user_input.split()
         }
 
-    return render_template("index.html", corrected_sentence=corrected_sentence, suggestions=suggestions_list)
+    return render_template("index.html", corrected_sentence=corrected_sentence,user_input=user_input)
 
 if __name__ == "__main__":
     app.run(debug=True)
